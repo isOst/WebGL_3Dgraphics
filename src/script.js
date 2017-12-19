@@ -11,12 +11,14 @@ initGL = () => {
 createShaders = () => {
     /**
      * Vertex Shader
-     * @type {string}
+     * @type {string}. passing data through attrs vars
      */
     let vs = "";
+    vs += "attribute vec4 coords;";
+    vs += "attribute float pointSize;";
     vs += "void main(void) {";
-    vs += " gl_Position = vec4(0.0, 0.0, 0.0, 1.0);";
-    vs += " gl_PointSize = 10.0;";
+    vs += " gl_Position = coords;";
+    vs += " gl_PointSize = pointSize;";
     vs += "}";
     /**
      * create and compile vertex shader
@@ -26,11 +28,13 @@ createShaders = () => {
     gl.compileShader(vertexShader);
     /**
      * Fragment Shader
-     * @type {string}
+     * @type {string} passing data through attrs vars
      */
     let fs = "";
+    fs += "precision mediump float;";
+    fs += "uniform vec4 color;";
     fs += "void main(void) {";
-    fs += " gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);";
+    fs += " gl_FragColor = color;";
     fs += "}";
     /**
      * create and compile fragment shader
@@ -47,6 +51,19 @@ createShaders = () => {
     gl.linkProgram(shaderProgram);
     gl.useProgram(shaderProgram);
 };
+/**
+ * set vars of shader's vertexes through attrs
+ */
+createVertices = () => {
+    let coords = gl.getAttribLocation(shaderProgram, "coords");
+    gl.vertexAttrib3f(coords, 0, 0, 0);
+
+    let pointSize = gl.getAttribLocation(shaderProgram, "pointSize");
+    gl.vertexAttrib1f(pointSize, 100);
+
+    let color = gl.getUniformLocation(shaderProgram, "color");
+    gl.uniform4f(color, 0, 1, 0, 1);
+}
 
 draw = () => {
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -58,4 +75,5 @@ draw = () => {
  */
 initGL();
 createShaders();
+createVertices();
 draw();

@@ -78,12 +78,12 @@ createVertices = () => {
     gl.vertexAttrib1f(pointSize, 50);
 
     let color = gl.getUniformLocation(shaderProgram, "color");
-    gl.uniform4f(color, 0, 1, 0, 1);
+    gl.uniform4f(color, 0, 0, 0, 1);
 }
 
 draw = () => {
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.POINTS, 0, 3);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
 };
 
 /**

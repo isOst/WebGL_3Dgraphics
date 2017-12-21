@@ -9,40 +9,50 @@ initGL = () => {
     gl.clearColor(1, 1, 1, 1);
 };
 
+getShaders = (gl, id) => {
+    let shaderScript = document.getElementById(id);
+    if (!shaderScript) {
+        return null;
+    }
+    let theSource = "";
+    let currentChild = shaderScript.firstChild;
+
+    while(currentChild) {
+        if (currentChild.nodeType == currentChild.TEXT_NODE) {
+            theSource += currentChild.textContent;
+        }
+        currentChild = currentChild.nextSibling;
+    }
+
+    if (shaderScript.type == "x-shader/x-fragment") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER)
+    } else if (shaderScript.type == "x-shader/x-vertex") {
+        shader = gl.createShader(gl.VERTEX_SHADER)
+    } else {
+        return null;
+    }
+    gl.shaderSource(shader, theSource)
+
+    // Compile the shader program
+    gl.compileShader(shader);
+
+    // If it compiled successfully
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert("An error occured compilling the shaders: " + gl.getShaderInfoLog(shader));
+        return null;
+    }
+    return shader;
+};
+
 createShaders = () => {
-    /**
-     * Vertex Shader
-     * @type {string}. passing data through attrs vars
-     */
-    let vs = "";
-    vs += "attribute vec4 coords;";
-    vs += "attribute float pointSize;";
-    vs += "void main(void) {";
-    vs += " gl_Position = coords;";
-    vs += " gl_PointSize = pointSize;";
-    vs += "}";
     /**
      * create and compile vertex shader
      */
-    let vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vertexShader, vs);
-    gl.compileShader(vertexShader);
-    /**
-     * Fragment Shader
-     * @type {string} passing data through attrs vars
-     */
-    let fs = "";
-    fs += "precision mediump float;";
-    fs += "uniform vec4 color;";
-    fs += "void main(void) {";
-    fs += " gl_FragColor = color;";
-    fs += "}";
+    let vertexShader = getShaders(gl, "shader-vs");
     /**
      * create and compile fragment shader
      */
-    let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fragmentShader, fs);
-    gl.compileShader(fragmentShader);
+    let fragmentShader = getShaders(gl, "shader-fs");
     /**
      * shader program -> link mid vertex and fragment shader
      */

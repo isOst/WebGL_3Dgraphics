@@ -1,6 +1,8 @@
 let gl,
     vertices,
-    shaderProgram;
+    shaderProgram,
+    matrix = mat4.create(),
+    vertexCount = 30;
 
 initGL = () => {
     let canvas = document.getElementById("canvas");
@@ -66,11 +68,12 @@ createShaders = () => {
  * set vars of shader's vertexes through attrs
  */
 createVertices = () => {
-    vertices = [
-        -0.9, -0.9, 0.0,
-         0.0,  0.9, 0.0,
-         0.9, -0.9, 0.0,
-    ];
+    vertices = [];
+    for(let i = 0; i < vertexCount; i++) {
+        vertices.push(Math.random() * 2 - 1);
+        vertices.push(Math.random() * 2 - 1);
+        vertices.push(Math.random() * 2 - 1);
+    }
     /**
      * create buffer array with vertices coords
      */
@@ -92,9 +95,15 @@ createVertices = () => {
 }
 
 draw = () => {
+    mat4.rotateX(matrix, matrix, -0.008);
+    mat4.rotateY(matrix, matrix, 0.013);
+    mat4.rotateZ(matrix, matrix, 0.01);
+    let transformMatrix = gl.getUniformLocation(shaderProgram, "transformMatrix");
+    gl.uniformMatrix4fv(transformMatrix, false, matrix);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-};
+    gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+    requestAnimationFrame(draw);
+}
 
 /**
  * Call functions

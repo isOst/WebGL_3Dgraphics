@@ -1,7 +1,18 @@
 let gl,
     vertices,
     shaderProgram,
-    vertexCount = 5000;
+    vertexCount = 5000,
+    mouseX = 0,
+    mouseY = 0;
+
+map = (value, minSrc, maxSrc, minDst, maxDst) => {
+    return (value - minSrc) / (maxSrc - minSrc) * (maxDst - minDst) + minDst;
+}
+
+canvas.addEventListener("mousemove", (event) => {
+    mouseX = map(event.clientX, 0, canvas.width, -1, 1);
+    mouseY = map(event.clientY, 0, canvas.height, 1, -1);
+});
 
 initGL = () => {
     let canvas = document.getElementById("canvas");
@@ -80,10 +91,8 @@ createVertices = () => {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
 
     let coords = gl.getAttribLocation(shaderProgram, "coords");
-    // gl.vertexAttrib3f(coords, 0, 0, 0); change single point to poits array
     gl.vertexAttribPointer(coords, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coords);
-    //gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     let pointSize = gl.getAttribLocation(shaderProgram, "pointSize");
     gl.vertexAttrib1f(pointSize, 1);
@@ -94,8 +103,16 @@ createVertices = () => {
 
 draw = () => {
     for(let i = 0; i < vertexCount * 2; i += 2) {
-        vertices[i] += Math.random() * 0.01 - 0.005;
-        vertices[i + 1] += Math.random() * 0.01 - 0.005;
+        let dx = vertices[i] - mouseX,
+            dy = vertices[i + 1] - mouseY,
+            dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 0.15) {
+            vertices[i] = mouseX + dx / dist * 0.2;
+            vertices[i + 1] = mouseY + dy / dist * 0.2;
+        } else {
+            vertices[i] += Math.random() * 0.01 - 0.005;
+            vertices[i + 1] += Math.random() * 0.01 - 0.005;
+        }
     }
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(vertices));
     gl.clear(gl.COLOR_BUFFER_BIT);

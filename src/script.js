@@ -7,6 +7,7 @@ let gl,
 initGL = () => {
     let canvas = document.getElementById("canvas");
     gl = canvas.getContext("webgl");
+    gl.enable(gl.DEPTH_TEST);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1, 1, 1, 1);
 };
@@ -69,10 +70,15 @@ createShaders = () => {
  */
 createVertices = () => {
     vertices = [];
+    let colors = [];
     for(let i = 0; i < vertexCount; i++) {
         vertices.push(Math.random() * 2 - 1);
         vertices.push(Math.random() * 2 - 1);
         vertices.push(Math.random() * 2 - 1);
+        colors.push(Math.random());
+        colors.push(Math.random());
+        colors.push(Math.random());
+        colors.push(1);
     }
     /**
      * create buffer array with vertices coords
@@ -86,12 +92,23 @@ createVertices = () => {
     gl.vertexAttribPointer(coords, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coords);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    /**
+     * copy previous block for color Array of vertex shader
+     */
+    let colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    let colorsLocation = gl.getAttribLocation(shaderProgram, "colors");
+    gl.vertexAttribPointer(colorsLocation, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(colorsLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     let pointSize = gl.getAttribLocation(shaderProgram, "pointSize");
     gl.vertexAttrib1f(pointSize, 50);
 
-    let color = gl.getUniformLocation(shaderProgram, "color");
-    gl.uniform4f(color, 0, 0, 0, 1);
+    // let color = gl.getUniformLocation(shaderProgram, "color");
+    // gl.uniform4f(color, 0, 0, 0, 1);
 }
 
 draw = () => {

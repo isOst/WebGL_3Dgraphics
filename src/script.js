@@ -2,7 +2,7 @@ let gl,
     vertices,
     shaderProgram,
     matrix = mat4.create(),
-    vertexCount = 30;
+    vertexCount = 36;
 
 initGL = () => {
     let canvas = document.getElementById("canvas");
@@ -69,17 +69,55 @@ createShaders = () => {
  * set vars of shader's vertexes through attrs
  */
 createVertices = () => {
-    vertices = [];
-    let colors = [];
-    for(let i = 0; i < vertexCount; i++) {
-        vertices.push(Math.random() * 2 - 1);
-        vertices.push(Math.random() * 2 - 1);
-        vertices.push(Math.random() * 2 - 1);
-        colors.push(Math.random());
-        colors.push(Math.random());
-        colors.push(Math.random());
-        colors.push(1);
-    }
+    vertices = [
+        0.88, -0.25, -0.18,     1, 0, 0, 1,
+        0.9, 0.25, 0,           1, 0, 0, 1,
+        0.88, -0.25, 0.18,      1, 0, 0, 1,
+
+        0.85, -0.25, 0.29,      1, 1, 0, 1,
+        0.78, 0.25, 0.45,       1, 1, 0, 1,
+        0.67, -0.25, 0.6,       1, 1, 0, 1,
+
+        0.6, -0.25, 0.67,       0, 1, 0, 1,
+        0.45, 0.25, 0.78,       0, 1, 0, 1,
+        0.29, -0.25, 0.85,      0, 1, 0, 1,
+
+        0.18, -0.25, 0.88,      0, 1, 1, 1,
+        0, 0.25, 0.9,           0, 1, 1, 1,
+        -0.18, -0.25, 0.88,     0, 1, 1, 1,
+
+        -0.29, -0.25, 0.85,     0, 0, 1, 1,
+        -0.45, 0.25, 0.78,      1, 1, 0, 1,
+        -0.6, -0.25, 0.67,      0, 0, 1, 1,
+
+        -0.67, -0.25, 0.6,      1, 0, 1, 1,
+        -0.78, 0.25, 0.45,      1, 0, 1, 1,
+        -0.85, -0.25, 0.29,     1, 0, 1, 1,
+
+        -0.88, -0.25, 0.18,     1, 0.5, 0, 1,
+        -0.9, 0.25, 0,          1, 0.5, 0, 1,
+        -0.88, -0.25, -0.18,    1, 0.5, 0, 1,
+
+        -0.85, -0.25, -0.29,    0, 0.5, 1, 1,
+        -0.78, 0.25, -0.45,     0, 0.5, 1, 1,
+        -0.67, -0.25, -0.6,     0, 0.5, 1, 1,
+
+        -0.6, -0.25, -0.67,     0, 1, 0.5, 1,
+        -0.45, 0.25, -0.78,     0, 1, 0.5, 1,
+        -0.29, -0.25, -0.85,    0, 1, 0.5, 1,
+
+        -0.18, -0.25, -0.88,    1, 0, 0.5, 1,
+        0, 0.25, -0.9,          1, 0, 0.5, 1,
+        0.18, -0.25, -0.88,     1, 0, 0.5, 1,
+
+        0.29, -0.25, -0.85,     0.5, 1, 0, 1,
+        0.45, 0.25, -0.78,      0.5, 1, 0, 1,
+        0.6, -0.25, -0.67,      0.5, 1, 0, 1,
+
+        0.67, -0.25, -0.6,      0.5, 0, 1, 1,
+        0.78, 0.25, -0.45,      0.5, 0, 1, 1,
+        0.85, -0.25, -0.29,     0.5, 0, 1, 1
+    ];
     /**
      * create buffer array with vertices coords
      */
@@ -89,18 +127,12 @@ createVertices = () => {
 
     let coords = gl.getAttribLocation(shaderProgram, "coords");
     // gl.vertexAttrib3f(coords, 0, 0, 0); change single point to poits array
-    gl.vertexAttribPointer(coords, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(coords, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 7, 0);
     gl.enableVertexAttribArray(coords);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    /**
-     * copy previous block for color Array of vertex shader
-     */
-    let colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
     let colorsLocation = gl.getAttribLocation(shaderProgram, "colors");
-    gl.vertexAttribPointer(colorsLocation, 4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(colorsLocation, 4, gl.FLOAT, false,
+        Float32Array.BYTES_PER_ELEMENT * 7, Float32Array.BYTES_PER_ELEMENT * 3);
     gl.enableVertexAttribArray(colorsLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 

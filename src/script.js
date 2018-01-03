@@ -139,8 +139,13 @@ createVertices = () => {
     let pointSize = gl.getAttribLocation(shaderProgram, "pointSize");
     gl.vertexAttrib1f(pointSize, 50);
 
-    // let color = gl.getUniformLocation(shaderProgram, "color");
-    // gl.uniform4f(color, 0, 0, 0, 1);
+    let perspectiveMatrix = mat4.create();
+    mat4.perspective(perspectiveMatrix, 1, canvas.width / canvas.height, 0.1, 10);
+
+    let perspectiveLoc = gl.getUniformLocation(shaderProgram, "perspectiveMatrix");
+    gl.uniformMatrix4fv(perspectiveLoc, false, perspectiveMatrix);
+
+    mat4.translate(matrix, matrix, [0, 0, -2]);
 }
 
 draw = () => {

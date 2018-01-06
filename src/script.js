@@ -9,7 +9,7 @@ initGL = () => {
     gl = canvas.getContext("webgl");
     gl.enable(gl.DEPTH_TEST);
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(1, 1, 1, 1);
+    gl.clearColor(0.3, 0.1, 0.8, 1);
 };
 
 getShaders = (gl, id) => {
@@ -70,23 +70,26 @@ createShaders = () => {
  */
 createVertices = () => {
     vertices = [];
-    for (let i = 0; i < 2; i += 0.01) {
-        vertices.push(i-1);
-        vertices.push(-0.3);
-        vertices.push(Math.sin(i * 10) * 0.2);
-        vertices.push(i / 2);
-        vertices.push(0);
-        vertices.push(1 - i / 2);
-        vertices.push(1);
+    vertices.push(0,0.9,0.3,   1,1,1,1);
+    for (let i = 0; i < Math.PI * 2; i += 0.01) {
+        vertices.push(Math.cos(i));
+        vertices.push(Math.sin(i));
+        vertices.push(Math.sin(i * 10) * 0.1);
 
-        vertices.push(i-1);
-        vertices.push(+0.3);
-        vertices.push(Math.sin(i * 10) * 0.2);
-        vertices.push(0);
-        vertices.push(1 - i / 2);
-        vertices.push(i / 2);
+        vertices.push(Math.sin(i * 10) * 0.5 + 0.5);
+        vertices.push(Math.sin(i * 8) * 0.5 + 0.5);
+        vertices.push(Math.sin(i * 12) * 0.5 + 0.5);
         vertices.push(1);
     }
+    i = Math.PI * 2;
+    vertices.push(Math.cos(i));
+    vertices.push(Math.sin(i));
+    vertices.push(Math.sin(i * 10) * 0.1);
+
+    vertices.push(Math.sin(i * 10) * 0.5 + 0.5);
+    vertices.push(Math.sin(i * 8) * 0.5 + 0.5);
+    vertices.push(Math.sin(i * 12) * 0.5 + 0.5);
+    vertices.push(1);
 
     vertexCount = vertices.length / 7;
     /**
@@ -121,7 +124,7 @@ draw = () => {
     let transformMatrix = gl.getUniformLocation(shaderProgram, "transformMatrix");
     gl.uniformMatrix4fv(transformMatrix, false, matrix);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertexCount);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexCount);
     requestAnimationFrame(draw);
 }
 
